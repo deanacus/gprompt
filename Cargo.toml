@@ -1,0 +1,10 @@
+[package]
+name = "gprompt"
+version = "0.1.0"
+authors = ["Dean Harris <dean@harris.tc>"]
+edition = "2018"
+
+[dependencies]
+ansi_term = "0.12.1"
+dirs = "3.0.2"
+git2 = "0.13"
