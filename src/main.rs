@@ -1,5 +1,5 @@
-use ansi_term::Colour::{Blue,Yellow,Purple,Red,Cyan,White};
-use git2::{self, Repository, StatusOptions, Status};
+use ansi_term::Colour::{Blue, Cyan, Purple, Red, White, Yellow};
+use git2::{self, Repository, Status, StatusOptions};
 
 const SYMBOL_PROMPT: &str = "❯";
 const SYMBOL_UNTRACKED: &str = "*";
@@ -27,7 +27,7 @@ fn get_path(cwd: &str) -> String {
         None => cwd.to_owned(),
     };
 
-    return display_path
+    return display_path;
 }
 
 fn branch_name(repository: &Repository) -> String {
@@ -38,7 +38,10 @@ fn branch_name(repository: &Repository) -> String {
     };
 
     if let Some(shorthand) = head.shorthand() {
-        return COLOR_BRANCH.dimmed().paint(shorthand.to_string()).to_string();
+        return COLOR_BRANCH
+            .dimmed()
+            .paint(shorthand.to_string())
+            .to_string();
     } else {
         return default;
     }
@@ -51,17 +54,19 @@ fn get_staged(repository: &Repository) -> String {
     let statuses = repository.statuses(Some(&mut opts)).unwrap();
     let count = statuses
         .iter()
-        .filter(|entry| entry.status().intersects(
-            Status::INDEX_NEW |
-            Status::INDEX_MODIFIED |
-            Status::INDEX_DELETED |
-            Status::INDEX_TYPECHANGE |
-            Status::INDEX_RENAMED
-        ))
+        .filter(|entry| {
+            entry.status().intersects(
+                Status::INDEX_NEW
+                    | Status::INDEX_MODIFIED
+                    | Status::INDEX_DELETED
+                    | Status::INDEX_TYPECHANGE
+                    | Status::INDEX_RENAMED,
+            )
+        })
         .count();
 
     if count > 0 {
-        return COLOR_STAGED.paint(SYMBOL_STAGED).to_string()
+        return COLOR_STAGED.paint(SYMBOL_STAGED).to_string();
     }
 
     return String::from("");
@@ -74,13 +79,15 @@ fn get_unstaged(repository: &Repository) -> String {
     let statuses = repository.statuses(Some(&mut opts)).unwrap();
     let count = statuses
         .iter()
-        .filter(|entry| entry.status().intersects(
-            Status::WT_NEW |
-            Status::WT_MODIFIED |
-            Status::WT_DELETED |
-            Status::WT_TYPECHANGE |
-            Status::WT_RENAMED
-        ))
+        .filter(|entry| {
+            entry.status().intersects(
+                Status::WT_NEW
+                    | Status::WT_MODIFIED
+                    | Status::WT_DELETED
+                    | Status::WT_TYPECHANGE
+                    | Status::WT_RENAMED,
+            )
+        })
         .count();
 
     if count > 0 {
@@ -96,9 +103,7 @@ fn get_untracked(repository: &Repository) -> String {
     let statuses = repository.statuses(Some(&mut opts)).unwrap();
     let count = statuses
         .iter()
-        .filter(|entry| entry.status().intersects(
-            Status::WT_NEW
-        ))
+        .filter(|entry| entry.status().intersects(Status::WT_NEW))
         .count();
 
     if count > 0 {
@@ -115,7 +120,8 @@ fn get_stash(repo: &mut Repository) -> String {
     repo.stash_foreach(|_stash, _stashlabel, _stashid| {
         count += 1;
         return true;
-    }).unwrap();
+    })
+    .unwrap();
 
     if count > 0 {
         return COLOR_STASHED.paint(SYMBOL_STASHED).to_string();
@@ -129,11 +135,13 @@ fn get_ahead_behind(repo: &Repository) -> String {
 
     let head = repo.head().unwrap();
     if !head.is_branch() {
-      return default;
+        return default;
     }
 
     let head_name = head.shorthand().unwrap();
-    let head_branch = repo.find_branch(head_name, git2::BranchType::Local).unwrap();
+    let head_branch = repo
+        .find_branch(head_name, git2::BranchType::Local)
+        .unwrap();
     let upstream = match head_branch.upstream() {
         Ok(up) => up,
         Err(_e) => return default,
@@ -154,20 +162,22 @@ fn get_ahead_behind(repo: &Repository) -> String {
 }
 
 fn git_prompt(cwd: &str) -> String {
-    let mut repo = match Repository::discover(cwd){
+    let mut repo = match Repository::discover(cwd) {
         Ok(repo) => repo,
         Err(_e) => return String::from(""),
     };
 
     let mut out = vec![];
 
-    out.push(branch_name(&repo));
-    out.push(" ".to_string());
-    out.push(get_ahead_behind(&repo));
-    out.push(get_unstaged(&repo));
-    out.push(get_staged(&repo));
-    out.push(get_stash(&mut repo));
-    out.push(get_untracked(&repo));
+    if !repo.is_bare() {
+        out.push(branch_name(&repo));
+        out.push(" ".to_string());
+        out.push(get_ahead_behind(&repo));
+        out.push(get_unstaged(&repo));
+        out.push(get_staged(&repo));
+        out.push(get_stash(&mut repo));
+        out.push(get_untracked(&repo));
+    }
 
     return out.join("");
 }
