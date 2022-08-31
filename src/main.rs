@@ -138,7 +138,7 @@ fn get_ahead_behind(repo: &Repository) -> String {
         return default;
     }
 
-    let head_name = head.shorthand().unwrap();
+    let head_name = head.shorthand().unwrap_or("");
     let head_branch = repo
         .find_branch(head_name, git2::BranchType::Local)
         .unwrap();
@@ -159,6 +159,13 @@ fn get_ahead_behind(repo: &Repository) -> String {
     }
 
     return out.join("");
+}
+
+fn is_repo(cwd: &str) -> bool {
+    match Repository::discover(cwd) {
+        Ok(repo) => return repo.is_bare(),
+        Err(_e) => return false,
+    };
 }
 
 fn git_prompt(cwd: &str) -> String {
@@ -191,5 +198,5 @@ fn main() {
 
     println!();
     println!("{} {}", Blue.paint(path_segment), git_segment);
-    println!("{} ", COLOR_PROMPT.paint(SYMBOL_PROMPT))
+    print!("{} ", COLOR_PROMPT.paint(SYMBOL_PROMPT))
 }
