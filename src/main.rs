@@ -133,10 +133,10 @@ fn get_ahead_behind(repo: &Repository) -> String {
     let default = String::from("");
     let mut out = vec![];
 
-    let head = repo.head().unwrap();
-    if !head.is_branch() {
-        return default;
-    }
+    let head = match repo.head() {
+        Ok(repo) => repo,
+        Err(_e) => return String::from(""),
+    };
 
     let head_name = head.shorthand().unwrap_or("");
     let head_branch = repo
@@ -159,13 +159,6 @@ fn get_ahead_behind(repo: &Repository) -> String {
     }
 
     return out.join("");
-}
-
-fn is_repo(cwd: &str) -> bool {
-    match Repository::discover(cwd) {
-        Ok(repo) => return repo.is_bare(),
-        Err(_e) => return false,
-    };
 }
 
 fn git_prompt(cwd: &str) -> String {
