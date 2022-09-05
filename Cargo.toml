@@ -1,6 +1,6 @@
 [package]
 name = "gprompt"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Dean Harris <dean@harris.tc>"]
 edition = "2018"
 
