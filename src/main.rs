@@ -1,4 +1,5 @@
 use ansi_term::Colour::{Blue, Cyan, Purple, Red, White, Yellow};
+use dirs::home_dir;
 use git2::{self, Repository, Status, StatusOptions};
 
 const SYMBOL_PROMPT: &str = "❯";
@@ -19,11 +20,9 @@ const COLOR_AHEAD: ansi_term::Colour = Cyan;
 const COLOR_BEHIND: ansi_term::Colour = Cyan;
 
 fn get_path(cwd: &str) -> String {
-    let home_path = dirs::home_dir().unwrap();
-    let home_dir = home_path.to_str();
-
-    let display_path = match home_dir {
-        Some(dir) => cwd.replacen(&dir, "~", 1),
+    let home_path = home_dir().unwrap();
+    let display_path = match home_path.to_str() {
+        Some(home) => cwd.replacen(home, "~", 1),
         None => cwd.to_owned(),
     };
 
