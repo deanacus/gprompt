@@ -1,8 +1,8 @@
 [package]
 name = "gprompt"
-version = "0.1.1"
+version = "1.0.0"
 authors = ["Dean Harris <dean@harris.tc>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 ansi_term = "0.12.1"
