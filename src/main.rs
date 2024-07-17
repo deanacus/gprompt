@@ -30,10 +30,13 @@ fn get_path(cwd: &str) -> String {
 }
 
 fn branch_name(repository: &Repository) -> String {
-    let default = String::from("");
+    if repository.head_detached().unwrap_or(true) {
+        return String::new();
+    }
+
     let head = match repository.head() {
         Ok(head) => head,
-        Err(_e) => return default,
+        Err(_e) => return String::new(),
     };
 
     if let Some(shorthand) = head.shorthand() {
@@ -42,7 +45,7 @@ fn branch_name(repository: &Repository) -> String {
             .paint(shorthand.to_string())
             .to_string();
     } else {
-        return default;
+        return String::new();
     }
 }
 
