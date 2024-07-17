@@ -119,7 +119,7 @@ fn get_stash(repo: &mut Repository) -> String {
 
     let mut count = 0;
 
-    repo.stash_foreach(|_stash, _stashlabel, _stashid| {
+    repo.stash_foreach(|_, _, _| {
         count += 1;
         return true;
     })
