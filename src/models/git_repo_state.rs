@@ -3,8 +3,8 @@
 #[derive(Debug, Default)]
 pub struct GitRepoState {
     pub branch: Option<String>,
-    pub ahead: u32,
-    pub behind: u32,
+    pub ahead: usize,
+    pub behind: usize,
     pub staged: usize,
     pub unstaged: usize,
     pub untracked: usize,

@@ -103,7 +103,7 @@ fn get_stash(repo: &mut Repository) -> usize {
     count
 }
 
-fn get_ahead_behind(repo: &Repository) -> (u32, u32) {
+fn get_ahead_behind(repo: &Repository) -> (usize, usize) {
     let head = match repo.head() {
         Ok(h) => h,
         Err(_) => return (0, 0),
@@ -129,5 +129,5 @@ fn get_ahead_behind(repo: &Repository) -> (u32, u32) {
         None => return (0, 0),
     };
     let (ahead, behind) = repo.graph_ahead_behind(head_oid, upstream_oid).unwrap_or((0, 0));
-    (ahead as u32, behind as u32)
+    (ahead, behind)
 }
