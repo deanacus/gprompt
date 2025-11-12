@@ -72,8 +72,7 @@ fn get_unstaged(repository: &Repository) -> usize {
         .iter()
         .filter(|entry| {
             entry.status().intersects(
-                Status::WT_NEW
-                    | Status::WT_MODIFIED
+                Status::WT_MODIFIED
                     | Status::WT_DELETED
                     | Status::WT_TYPECHANGE
                     | Status::WT_RENAMED,
