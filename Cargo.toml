@@ -3,8 +3,14 @@ name = "gprompt"
 version = "1.0.0"
 authors = ["Dean Harris <dean@harris.tc>"]
 edition = "2021"
+rust-version = "1.70.0"
 
 [dependencies]
 ansi_term = "0.12.1"
 dirs = "3.0.2"
 git2 = "0.19.0"
+
+[dev-dependencies]
+assert_cmd = "2.0"
+tempfile = "3.10"
+predicates = "3.1"
