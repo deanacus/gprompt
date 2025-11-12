@@ -5,11 +5,9 @@
 My shell prompt, written in Rust, because I wanted to play with rust.
 
 ### Project Structure (Idiomatic Rust)
-- `src/models/`: Data structures (e.g., `GitRepoState`, prompt enums)
+- `src/models/`: Data structures (e.g., `GitRepoState`)
 - `src/services/`: Business logic (e.g., git status computation)
 - `src/main.rs`: Presentation layer (prompt rendering, CLI entrypoint)
-
-All code is idiomatic, modular, and safe. See `specs/001-idiomatic-safe-rust/` for the full specification and rationale.
 
 ## Requirements
 
