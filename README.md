@@ -33,7 +33,7 @@ I might get around to doing a "release" sometime soon.
 ## Features
 
 - Idiomatic, modular Rust codebase: core logic is split into `models/` (data structures) and `services/` (logic/services).
-- All prompt symbols and colors are defined as enums/constants for clarity and extensibility.
+- Prompt symbols and colors are defined inline for simplicity.
 - Safe error handling throughout: no panics or unwraps, all errors are handled gracefully.
 - Uses `Path`/`PathBuf` for all filesystem operations, never raw strings.
 - Easily extensible: to add new git states or prompt features, just add to the enums and update the rendering logic.
