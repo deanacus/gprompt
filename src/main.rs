@@ -12,7 +12,10 @@ fn get_path(cwd: &Path) -> String {
         Some(p) => p,
         None => return cwd.display().to_string(),
     };
-    let home_str = home_path.to_str().unwrap_or("");
+    let home_str = match home_path.to_str() {
+        Some(s) if !s.is_empty() => s,
+        _ => return cwd.display().to_string(),
+    };
     let cwd_str = cwd.display().to_string();
     if cwd_str.starts_with(home_str) {
         cwd_str.replacen(home_str, "~", 1)
