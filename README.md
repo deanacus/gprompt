@@ -34,7 +34,7 @@ I might get around to doing a "release" sometime soon.
 - Prompt symbols and colors are defined inline for simplicity.
 - Safe error handling throughout: no panics or unwraps, all errors are handled gracefully.
 - Uses `Path`/`PathBuf` for all filesystem operations, never raw strings.
-- Easily extensible: to add new git states or prompt features, just add to the enums and update the rendering logic.
+- Easily extensible: to add new git states or prompt features, just add fields to the struct and update the rendering logic.
 
 Not many. Some basic git stuff, that's about it. Everything is hardcoded,
 because I'm not interested in making it configurable. If you want to add that,
