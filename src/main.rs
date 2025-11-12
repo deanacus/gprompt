@@ -1,13 +1,9 @@
 mod models;
 mod services;
-use ansi_term::Colour::Blue;
-use ansi_term::Colour::Purple;
+use ansi_term::Colour;
 use dirs::home_dir;
 
 use crate::services::git_status::get_git_repo_state;
-
-const SYMBOL_PROMPT: &str = "❯";
-const COLOR_PROMPT: ansi_term::Colour = Purple;
 
 use std::path::Path;
 
@@ -25,9 +21,7 @@ fn get_path(cwd: &Path) -> String {
     }
 }
 
-
 fn main() {
-    use crate::models::prompt::GitStatusSymbol;
     let path = match std::env::current_dir() {
         Ok(p) => p,
         Err(_) => {
@@ -40,30 +34,30 @@ fn main() {
     let git_state = get_git_repo_state(&path);
 
     println!();
-    print!("{} ", Blue.paint(path_segment));
+    print!("{} ", Colour::Blue.paint(path_segment));
     if let Some(state) = git_state {
         if let Some(branch) = state.branch {
-            print!("{} ", GitStatusSymbol::Branch.color().dimmed().paint(branch));
+            print!("{} ", Colour::White.dimmed().paint(branch));
         }
         if state.ahead > 0 {
-            print!("{}", GitStatusSymbol::Ahead.color().paint(GitStatusSymbol::Ahead.symbol()));
+            print!("{}", Colour::Cyan.paint("↑"));
         }
         if state.behind > 0 {
-            print!("{}", GitStatusSymbol::Behind.color().paint(GitStatusSymbol::Behind.symbol()));
+            print!("{}", Colour::Cyan.paint("↓"));
         }
         if state.unstaged > 0 {
-            print!("{}", GitStatusSymbol::Unstaged.color().paint(GitStatusSymbol::Unstaged.symbol()));
+            print!("{}", Colour::Red.paint("×"));
         }
         if state.staged > 0 {
-            print!("{}", GitStatusSymbol::Staged.color().paint(GitStatusSymbol::Staged.symbol()));
+            print!("{}", Colour::Cyan.paint("+"));
         }
         if state.stashed > 0 {
-            print!("{}", GitStatusSymbol::Stashed.color().paint(GitStatusSymbol::Stashed.symbol()));
+            print!("{}", Colour::Yellow.paint("•"));
         }
         if state.untracked > 0 {
-            print!("{}", GitStatusSymbol::Untracked.color().paint(GitStatusSymbol::Untracked.symbol()));
+            print!("{}", Colour::Yellow.paint("*"));
         }
     }
     println!();
-    print!("{} ", COLOR_PROMPT.paint(SYMBOL_PROMPT));
+    print!("{} ", Colour::Purple.paint("❯"));
 }
