@@ -2,7 +2,7 @@
 
 ## What is it?
 
-My shell prompt, written in Rust, because I wanted to play with rust.
+My shell prompt, written in Rust, because I wanted to play with Rust.
 
 ### Project Structure (Idiomatic Rust)
 - `src/models/`: Data structures (e.g., `GitRepoState`)
