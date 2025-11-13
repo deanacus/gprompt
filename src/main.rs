@@ -39,7 +39,11 @@ fn main() {
     println!();
     print!("{} ", Colour::Blue.paint(path_segment));
     if let Some(state) = git_state {
-        if let Some(branch) = state.branch {
+        if let Some(special_display) = state.special_state.display_name() {
+            // Display special state instead of branch
+            print!("{} ", Colour::White.dimmed().paint(special_display));
+        } else if let Some(branch) = state.branch {
+            // Normal state: display branch
             print!("{} ", Colour::White.dimmed().paint(branch));
         }
         if state.ahead > 0 {
