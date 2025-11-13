@@ -7,7 +7,7 @@ pub struct GitRepoState {
     /// Branch name (remains populated even in special states; display logic determines what to show)
     pub branch: Option<String>,
 
-    /// Special git state (if any)
+    /// Special git state (rebase, merge, cherry-pick, detached, etc) if any
     pub special_state: GitSpecialState,
 
     pub ahead: usize,

@@ -61,15 +61,15 @@ pub enum GitSpecialState {
     Normal,
 
     /// Repository is in rebase state
-    /// Contains optional progress: (current_step, total_steps)
+    /// Contains optional progress information (`OperationProgress` with fields `current` and `total`)
     Rebasing(Option<OperationProgress>),
 
     /// Repository is in cherry-pick state
-    /// Contains optional progress: (current_step, total_steps)
+    /// Contains optional progress information (`OperationProgress` with fields `current` and `total`)
     CherryPicking(Option<OperationProgress>),
 
     /// Repository is in detached HEAD state
-    /// Contains the short commit SHA (7 characters)
+    /// Contains the short commit SHA (up to 7 characters, or full SHA if shorter)
     Detached(String),
 
     /// Repository is in merge state
