@@ -37,51 +37,30 @@ use crate::models::git_special_state::{GitSpecialState, OperationProgress};
 /// - Side Effects: None (read-only operation)
 /// - Performance: Completes in <10ms for typical repositories
 pub fn detect_special_state(repo: &git2::Repository) -> GitSpecialState {
-    // T021: Add rebase state detection logic using Repository::state()
     let state = repo.state();
 
     #[allow(unreachable_patterns)]
     match state {
         git2::RepositoryState::Rebase
         | git2::RepositoryState::RebaseInteractive
-        | git2::RepositoryState::RebaseMerge => {
-            // T020: Call detect_rebase_state() helper function
-            detect_rebase_state(repo)
-        }
-        // T032: Add cherry-pick state detection using RepositoryState::CherryPick
+        | git2::RepositoryState::RebaseMerge => detect_rebase_state(repo),
         git2::RepositoryState::CherryPick | git2::RepositoryState::CherryPickSequence => {
-            // T033: Implement cherry-pick sequence detection
             // NOTE: git2 API does not expose step-by-step progress for sequences
-            // T034: Fallback to display "Cherry-picking" without progress
             GitSpecialState::CherryPicking(None)
         }
-        // T049: Add merge state detection using RepositoryState::Merge
-        git2::RepositoryState::Merge => {
-            // T050: Return GitSpecialState::Merging when merge state detected
-            GitSpecialState::Merging
-        }
-        // T055: Add revert state detection using RepositoryState::Revert
+        git2::RepositoryState::Merge => GitSpecialState::Merging,
         git2::RepositoryState::Revert | git2::RepositoryState::RevertSequence => {
-            // T056: Handle Revert and RevertSequence states
-            // T057: Return GitSpecialState::Reverting when detected
             GitSpecialState::Reverting
         }
-        // T059: Add Bisecting state detection using RepositoryState::Bisect
         git2::RepositoryState::Bisect => GitSpecialState::Bisecting,
-        // T060: Add ApplyingPatches state detection using RepositoryState::ApplyMailbox
         git2::RepositoryState::ApplyMailbox | git2::RepositoryState::ApplyMailboxOrRebase => {
             GitSpecialState::ApplyingPatches
         }
-        git2::RepositoryState::Clean => {
-            // T044: Ensure detached HEAD check only runs when repo state is Clean
-            // T041: Add detached HEAD check using Repository::head_detached()
-            detect_detached_head(repo)
-        }
+        git2::RepositoryState::Clean => detect_detached_head(repo),
         _ => GitSpecialState::Normal,
     }
 }
 
-// T020: Implement detect_rebase_state() helper function
 /// Detects rebase state and extracts progress information
 ///
 /// # Arguments
@@ -90,8 +69,6 @@ pub fn detect_special_state(repo: &git2::Repository) -> GitSpecialState {
 /// # Returns
 /// * `GitSpecialState::Rebasing` - With progress if available, None otherwise
 fn detect_rebase_state(repo: &git2::Repository) -> GitSpecialState {
-    // T022: Implement rebase progress extraction using Repository::open_rebase()
-    // T023: Add error handling for corrupted rebase state (fallback to Rebasing(None))
     match repo.open_rebase(None) {
         Ok(mut rebase) => {
             // Extract progress information
@@ -116,14 +93,12 @@ fn detect_rebase_state(repo: &git2::Repository) -> GitSpecialState {
             }
         }
         Err(_) => {
-            // T023: Error opening rebase (corrupted state or other issues)
             // Fallback to Rebasing without progress
             GitSpecialState::Rebasing(None)
         }
     }
 }
 
-// T040: Implement detect_detached_head() helper function
 /// Detects detached HEAD state and extracts short commit SHA
 ///
 /// # Arguments
@@ -133,11 +108,9 @@ fn detect_rebase_state(repo: &git2::Repository) -> GitSpecialState {
 /// * `GitSpecialState::Detached` - With short SHA (7 chars) if available
 /// * `GitSpecialState::Normal` - If HEAD is not detached
 fn detect_detached_head(repo: &git2::Repository) -> GitSpecialState {
-    // T041: Add detached HEAD check using Repository::head_detached()
     match repo.head_detached() {
         Ok(true) => {
             // HEAD is detached, extract the short SHA
-            // T042: Extract short SHA (7 characters) from HEAD reference
             match repo.head() {
                 Ok(head) => {
                     if let Some(oid) = head.target() {
@@ -150,14 +123,10 @@ fn detect_detached_head(repo: &git2::Repository) -> GitSpecialState {
                         };
                         GitSpecialState::Detached(short_sha)
                     } else {
-                        // T043: Add error handling for missing HEAD target (fallback to "unknown")
                         GitSpecialState::Detached("unknown".to_string())
                     }
                 }
-                Err(_) => {
-                    // T043: Error reading HEAD (fallback to "unknown")
-                    GitSpecialState::Detached("unknown".to_string())
-                }
+                Err(_) => GitSpecialState::Detached("unknown".to_string()),
             }
         }
         Ok(false) => {

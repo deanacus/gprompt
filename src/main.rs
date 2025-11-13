@@ -39,8 +39,6 @@ fn main() {
     println!();
     print!("{} ", Colour::Blue.paint(path_segment));
     if let Some(state) = git_state {
-        // T025: Update main.rs display logic to check special_state.display_name() before branch
-        // T026: Add color formatting for rebase state display (White dimmed)
         if let Some(special_display) = state.special_state.display_name() {
             // Display special state instead of branch
             print!("{} ", Colour::White.dimmed().paint(special_display));

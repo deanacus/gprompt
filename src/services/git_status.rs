@@ -17,7 +17,6 @@ pub fn get_git_repo_state(cwd: &std::path::Path) -> Option<GitRepoState> {
     let untracked = get_untracked(&repo);
     let stashed = get_stash(&mut repo);
 
-    // T024: Update get_git_repo_state() to call detect_special_state()
     let special_state = git_state_detector::detect_special_state(&repo);
 
     Some(GitRepoState {
