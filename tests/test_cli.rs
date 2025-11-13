@@ -334,9 +334,7 @@ fn prompt_shows_all_states() {
         .current_dir(c1.path())
         .output()
         .unwrap();
-    // New untracked file
-    fs::write(c1.path().join("untracked.txt"), "u").unwrap();
-    // Unstaged change
+    // Unstaged change (to be stashed)
     fs::write(&file, "baz").unwrap();
     // Stash
     StdCommand::new("git")
@@ -363,6 +361,10 @@ fn prompt_shows_all_states() {
         .current_dir(c1.path())
         .output()
         .unwrap();
+    // New untracked file (after stash so it remains untracked)
+    fs::write(c1.path().join("untracked.txt"), "u").unwrap();
+    // Unstaged change (after stash so it remains unstaged)
+    fs::write(&file, "unstaged_content").unwrap();
     let mut cmd = Command::cargo_bin("gprompt").unwrap();
     cmd.current_dir(c1.path());
     let out = cmd.assert().get_output().stdout.clone();
