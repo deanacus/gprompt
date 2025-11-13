@@ -1,10 +1,8 @@
 // src/services/git_status.rs
 
-use git2::{Repository, Status, StatusOptions};
 use crate::models::git_repo_state::GitRepoState;
-
-
-
+use crate::services::git_state_detector;
+use git2::{Repository, Status, StatusOptions};
 
 pub fn get_git_repo_state(cwd: &std::path::Path) -> Option<GitRepoState> {
     let mut repo = Repository::discover(cwd).ok()?;
@@ -19,8 +17,12 @@ pub fn get_git_repo_state(cwd: &std::path::Path) -> Option<GitRepoState> {
     let untracked = get_untracked(&repo);
     let stashed = get_stash(&mut repo);
 
+    // T024: Update get_git_repo_state() to call detect_special_state()
+    let special_state = git_state_detector::detect_special_state(&repo);
+
     Some(GitRepoState {
         branch,
+        special_state,
         ahead,
         behind,
         staged,
@@ -128,6 +130,8 @@ fn get_ahead_behind(repo: &Repository) -> (usize, usize) {
         Some(oid) => oid,
         None => return (0, 0),
     };
-    let (ahead, behind) = repo.graph_ahead_behind(head_oid, upstream_oid).unwrap_or((0, 0));
+    let (ahead, behind) = repo
+        .graph_ahead_behind(head_oid, upstream_oid)
+        .unwrap_or((0, 0));
     (ahead, behind)
 }
